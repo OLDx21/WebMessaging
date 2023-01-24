@@ -10,7 +10,6 @@ public class MessageController {
     @MessageMapping("/send")
     @SendTo("/chat/messenger")
     public MessageResponse sendMessage(Message message) {
-        System.out.println(message.getContent() + " " + message.getUserName());
         return new MessageResponse(message.getUserName(), message.getContent());
     }
 }

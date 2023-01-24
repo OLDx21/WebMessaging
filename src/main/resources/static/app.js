@@ -1,5 +1,5 @@
 var stompClient = null;
-window.onload = function() {
+window.onload = function () {
     connect();
 };
 
@@ -8,11 +8,10 @@ function setConnected(connected) {
     $("#disconnect").prop("disabled", !connected);
     if (connected) {
         $("#conversation").show();
-    }
-    else {
+    } else {
         $("#conversation").hide();
     }
-    $("#greetings").html("");
+    $("#chat").html("");
 }
 
 function connect() {
@@ -22,23 +21,24 @@ function connect() {
         setConnected(true);
         console.log('Connected: ' + frame);
         stompClient.subscribe('/chat/messenger', function (greeting) {
-            showGreeting(JSON.parse(greeting.body).content);
+            showGreeting(JSON.parse(greeting.body).userName, JSON.parse(greeting.body).content);
         });
     });
 }
 
-function sendName() {
-    stompClient.send("/app/send", {}, JSON.stringify({'userName': $("#name").val()}));
+function sendMessage() {
+    stompClient.send("/app/send", {}, JSON.stringify({'userName': $("#name").val(), 'content': $("#message").val()}));
+    document.getElementById('message').value = ''
 }
 
-function showGreeting(message) {
-    $("#greetings").append("<tr><td>" + message + "</td></tr>");
+function showGreeting(user, message) {
+    $("#chat").append("<tr><td>" + user + ": " + message + "</td></tr>");
 }
 
 $(function () {
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
-    $( "#send" ).click(function() { sendName(); });
+    $( "#send" ).click(function() { sendMessage(); });
 });
 
